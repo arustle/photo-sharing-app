@@ -15,4 +15,4 @@ services:
   frontend:
     build:
       context: ../../frontend  
-    image: arustle/frontend:local
+    image: arustle/frontend

@@ -19,7 +19,6 @@ To change the context:
 ### Setup on AWS
 
 ```eksctl create cluster --name=<CLUSTER_NAME> --region=<REGION_NAME> --fargate```
-eksctl create cluster --name='photo-sharing-app-cluster' --region='us-east-1 --fargate
 
 To view all available contexts:
 ```kubectl config get-contexts```
@@ -33,10 +32,13 @@ To change the context:
 ```kubectl create -f env-configmap.yaml```
 
 ```kubectl create -f backend-feed-deployment.yaml```
-```kubectl create -f backend-user-deployment.yaml```
-```kubectl create -f reverseproxy-deployment.yaml```
-```kubectl create -f frontend-deployment.yaml```
-
 ```kubectl create -f backend-feed-service.yaml```
+```kubectl create -f backend-user-deployment.yaml```
 ```kubectl create -f backend-user-service.yaml```
+
+```kubectl create -f reverseproxy-deployment.yaml```
 ```kubectl create -f reverseproxy-service.yaml```
+
+```kubectl create -f frontend-deployment.yaml```
+```kubectl create -f frontend-service.yaml```
+
