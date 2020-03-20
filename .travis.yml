@@ -20,4 +20,9 @@ before_install:
 install:
   - docker-compose -f deployment/docker/docker-compose-build.yaml build --parallel 
 
-
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+  docker push arustle/arustle/psa-reverseproxy;
+  docker push arustle/psa-restapi-user;
+  docker push arustle/psa-restapi-feed;
+  docker push arustle/frontend;
+  fi
