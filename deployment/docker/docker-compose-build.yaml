@@ -14,5 +14,5 @@ services:
     image: arustle/psa-restapi-feed
   frontend:
     build:
-      context: ../../frontend  
-    image: arustle/frontend
+      context: ../../frontend
+    image: arustle/psa-frontend
