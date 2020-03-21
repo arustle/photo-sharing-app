@@ -1,53 +1,71 @@
-# Udagram Image Filtering Microservice
+# Photo Sharing Application
 
-Udagram is a simple cloud application developed alongside the Udacity Cloud Engineering Nanodegree. It allows users to register and log into a web client, post photos to the feed, and process photos using an image filtering microservice.
+This is a simple cloud application developed alongside the Udacity Cloud Engineering Nanodegree. It allows users to register and log into a web client, post photos to the feed, and process photos using an image filtering microservice.
 
-The project is split into three parts:
-1. [The Simple Frontend](/frontend)
-A basic Ionic client web application which consumes the RestAPI Backend. 
-2. [The RestAPI Feed Backend](/restapi-feed), a Node-Express feed microservice.
-3. [The RestAPI User Backend](/restapi-user), a Node-Express user microservice.
+## Architecture
+There a four microservices:
+1. User API - Manages the authentication of the user.  This is not public facing and is only accesible through the reverseproxy.
+2. Feed API - Handles requests related to the posts.  This is not public facing and is only accesible through the reverseproxy.
+3. Reverseproxy - This server routes traffic to the Feed API or User API depending on the request.
+4. Frontend - This is the UI and is built using the Ionic framework
 
-## Getting Setup
-
-> _tip_: this frontend is designed to work with the RestAPI backends). It is recommended you stand up the backend first, test using Postman, and then the frontend should integrate.
-
-### Installing Node and NPM
-This project depends on Nodejs and Node Package Manager (NPM). Before continuing, you must download and install Node (NPM is included) from [https://nodejs.com/en/download](https://nodejs.org/en/download/).
-
-### Installing Ionic Cli
-The Ionic Command Line Interface is required to serve and build the frontend. Instructions for installing the CLI can be found in the [Ionic Framework Docs](https://ionicframework.com/docs/installation/cli).
-
-### Installing project dependencies
-
-This project uses NPM to manage software dependencies. NPM Relies on the package.json file located in the root of this repository. After cloning, open your terminal and run:
-```bash
-npm install
-```
->_tip_: **npm i** is shorthand for **npm install**
-
-### Setup Backend Node Environment
-You'll need to create a new node server. Open a new terminal within the project directory and run:
-1. Initialize a new project: `npm init`
-2. Install express: `npm i express --save`
-3. Install typescript dependencies: `npm i ts-node-dev tslint typescript  @types/bluebird @types/express @types/node --save-dev`
-4. Look at the `package.json` file from the RestAPI repo and copy the `scripts` block into the auto-generated `package.json` in this project. This will allow you to use shorthand commands like `npm run dev`
+## Dependencies
+This project depends on Nodejs, NPM and the Ionic CLI.
+[https://nodejs.com/en/download](https://nodejs.org/en/download/)
+[Ionic Framework Docs](https://ionicframework.com/docs/installation/cli)
 
 
-### Configure The Backend Endpoint
-Ionic uses enviornment files located in `./src/enviornments/enviornment.*.ts` to load configuration variables at runtime. By default `environment.ts` is used for development and `enviornment.prod.ts` is used for produciton. The `apiHost` variable should be set to your server url either locally or in the cloud.
+## Configure The Frontend
+The Frontend application uses enviornment files located in `./frontend/src/enviornments/environment.*.ts` to load configuration variables at runtime. By default `environment.ts` is used for development and `environment.prod.ts` is used for production. The `apiHost` variable should be set to your server url either locally or in the cloud.
 
-***
-### Running the Development Server
-Ionic CLI provides an easy to use development server to run and autoreload the frontend. This allows you to make quick changes and see them in real time in your browser. To run the development server, open terminal and run:
 
-```bash
-ionic serve
-```
+## Setup Docker Environment
 
-### Building the Static Frontend Files
-Ionic CLI can build the frontend into static HTML/CSS/JavaScript files. These files can be uploaded to a host to be consumed by users on the web. Build artifacts are located in `./www`. To build from source, open terminal and run:
-```bash
-ionic build
-```
-***
+To view all available contexts:
+```kubectl config get-contexts```
+
+To change the context:
+```kubectl config use-context docker-for-desktop```
+
+
+# Kubernetes
+
+## Setup on AWS
+If you want to use this on AWS, you can use the `eksctl` cli.
+[eksctl CLI](https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html)
+
+```eksctl create cluster --name=<CLUSTER_NAME> --region=<REGION_NAME> --fargate```
+
+You can switch between the AWS and your local environment by managinf contexts.  To view the available contexts:
+
+```kubectl config get-contexts```
+
+To change the context:
+
+```kubectl config use-context <CONTEXT_NAME>```
+
+
+### Setup up the configmaps and secrets:
+The `deployment/k8s` folder contains the Kubernetes manifests to deploy the application.  
+
+```kubectl create secret generic env-secret --from-literal=POSTGRESS_USERNAME=<> --from-literal=POSTGRESS_PASSWORD=<>```
+```kubectl create secret generic aws-secret --from-file=<PATH_TO_AWS_CREDENTIALS>```
+
+The `examples` folder contains the template for env-config configmap.
+
+```kubectl create -f env-configmap.yaml```
+
+### Setup
+
+```kubectl create -f backend-feed-deployment.yaml```
+```kubectl create -f backend-feed-service.yaml```
+
+```kubectl create -f backend-user-deployment.yaml```
+```kubectl create -f backend-user-service.yaml```
+
+```kubectl create -f reverseproxy-deployment.yaml```
+```kubectl create -f reverseproxy-service.yaml```
+
+```kubectl create -f frontend-deployment.yaml```
+```kubectl create -f frontend-service.yaml```
+
